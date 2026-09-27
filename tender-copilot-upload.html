@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tender Copilot · Tender review for government entities in Qatar</title>
+<meta name="description" content="Upload a tender draft and receive a compliance review report by email.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%237A1331'/%3E%3Cpath d='M10 7h9l5 5v13H10z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --maroon: #7A1331;
+    --maroon-deep: #5A0D24;
+    --maroon-ink: #3F0919;
+    --ink: #1B2230;
+    --muted: #5B6472;
+    --faint: #8A929E;
+    --line: #DCE0E5;
+    --stone: #F3F4F6;
+    --paper: #FFFFFF;
+    --sand: #C79A4B;
+    --ok: #1E7A50;
+    --ok-soft: #E6F3EC;
+    --danger: #A4212F;
+    --danger-soft: #FBEAEC;
+    --radius: 10px;
+    --font: "IBM Plex Sans", "IBM Plex Sans Arabic", "Segoe UI", Tahoma, Arial, sans-serif;
+  }
+  [dir="rtl"] { --font: "IBM Plex Sans Arabic", "IBM Plex Sans", Tahoma, Arial, sans-serif; }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; font-family: var(--font); color: var(--ink); background: var(--stone);
+    font-size: 16px; line-height: 1.55; -webkit-font-smoothing: antialiased;
+  }
+  button, input, select { font: inherit; }
+  .wrap { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+
+  /* ---------- Header ---------- */
+  .topbar { background: var(--maroon-ink); color: rgba(255,255,255,.78); font-size: 13px; }
+  .topbar .wrap { display: flex; justify-content: space-between; align-items: center; min-height: 34px; gap: 16px; }
+  header.site { background: var(--maroon); color: #fff; }
+  header.site .wrap { display: flex; align-items: center; justify-content: space-between; min-height: 72px; gap: 16px; }
+  .brand { display: flex; align-items: center; gap: 12px; color: #fff; text-decoration: none; }
+  .brand-mark { width: 40px; height: 40px; flex: none; }
+  .brand-name { font-weight: 700; font-size: 18px; line-height: 1.15; }
+  .brand-name small { display: block; font-weight: 400; font-size: 13px; opacity: .78; }
+  .lang {
+    display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,.1); color: #fff;
+    border: 1px solid rgba(255,255,255,.35); border-radius: 999px; padding: 8px 16px; cursor: pointer; font-weight: 500; font-size: 15px;
+  }
+  .lang:hover { background: rgba(255,255,255,.18); }
+  .lang svg { width: 16px; height: 16px; }
+
+  /* ---------- Hero ---------- */
+  .hero { position: relative; background: var(--maroon); color: #fff; padding: 40px 0 150px; overflow: hidden; }
+  .hero::before { /* lattice pattern */
+    content: ""; position: absolute; inset: 0; opacity: .07; pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%23fff' stroke-width='1.2'%3E%3Cpath d='M32 6l7.5 18.5L58 32l-18.5 7.5L32 58l-7.5-18.5L6 32l18.5-7.5z'/%3E%3Cpath d='M13.6 13.6h36.8v36.8H13.6z' transform='rotate(45 32 32)'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 64px 64px;
+    -webkit-mask-image: linear-gradient(to bottom, #000 30%, transparent 95%); mask-image: linear-gradient(to bottom, #000 30%, transparent 95%);
+  }
+  .hero .teeth { position: absolute; left: 0; right: 0; bottom: -1px; width: 100%; height: 34px; display: block; }
+  .hero-inner { position: relative; max-width: 520px; }
+  @media (min-width: 961px) { .layout .card { margin-top: -262px; } .hero { padding-bottom: 170px; } main { margin-top: -140px; } .how { padding-top: 172px; } }
+  .hero .kicker { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: #F3D9A8; margin: 0 0 16px; }
+  .hero .kicker::before { content: ""; width: 8px; height: 8px; background: var(--sand); transform: rotate(45deg); }
+  .hero h1 { font-size: clamp(32px, 4.6vw, 52px); line-height: 1.08; letter-spacing: -0.015em; margin: 0 0 18px; font-weight: 700; }
+  [dir="rtl"] .hero h1 { letter-spacing: 0; line-height: 1.3; }
+  .hero .lede { font-size: 18px; line-height: 1.6; color: rgba(255,255,255,.86); margin: 0; max-width: 34em; }
+
+  /* ---------- Main layout ---------- */
+  main { position: relative; margin-top: -118px; padding-bottom: 72px; }
+  .layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 580px); gap: 48px; align-items: start; }
+
+  /* How it works (a real sequence) */
+  .how { padding-top: 150px; }
+  .how h2 { font-size: 15px; font-weight: 600; color: var(--muted); margin: 0 0 18px; }
+  .how ol { list-style: none; margin: 0; padding: 0; counter-reset: s; position: relative; }
+  .how li { counter-increment: s; position: relative; padding-inline-start: 56px; padding-bottom: 26px; }
+  .how li:not(:last-child)::after { content: ""; position: absolute; inset-inline-start: 19px; top: 42px; bottom: 4px; width: 2px; background: var(--line); }
+  .how li::before {
+    content: counter(s); position: absolute; inset-inline-start: 0; top: 0; width: 40px; height: 40px; border-radius: 50%;
+    display: grid; place-items: center; background: var(--paper); border: 2px solid var(--maroon); color: var(--maroon); font-weight: 700;
+  }
+  .how b { display: block; font-size: 17px; font-weight: 600; margin-top: 7px; }
+  .how span { color: var(--muted); font-size: 15px; }
+
+  /* ---------- Card ---------- */
+  .card {
+    background: var(--paper); border-radius: 14px; border: 1px solid rgba(27,34,48,.08);
+    box-shadow: 0 24px 48px -24px rgba(63,9,25,.35), 0 2px 6px rgba(27,34,48,.06);
+    overflow: hidden;
+  }
+  .card-head { padding: 26px 32px 0; }
+  .card-head h2 { font-size: 22px; margin: 0 0 4px; line-height: 1.3; }
+  .card-head p { margin: 0; color: var(--muted); font-size: 15px; }
+  .card-body { padding: 24px 32px 32px; }
+
+  .field { margin-bottom: 20px; }
+  .label { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--ink); }
+  .label .opt { font-weight: 400; color: var(--faint); font-size: 13px; }
+
+  /* Drop zone */
+  .drop {
+    position: relative; display: block; text-align: center; cursor: pointer;
+    border: 1.5px dashed #C4CAD2; border-radius: var(--radius); padding: 30px 20px 24px; background: #FAFBFC;
+    transition: border-color .15s, background-color .15s;
+  }
+  .drop:hover, .drop.over { border-color: var(--maroon); background: #FCF6F8; }
+  .drop input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+  .drop .up { width: 48px; height: 48px; margin: 0 auto 12px; display: grid; place-items: center; border-radius: 50%; background: #F6E8ED; }
+  .drop strong { display: block; font-size: 16px; font-weight: 600; }
+  .drop strong u { color: var(--maroon); text-decoration: none; border-bottom: 1.5px solid currentColor; }
+  .drop .sub { display: block; font-size: 14px; color: var(--muted); margin-top: 4px; }
+  .types { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+  .types span { font-size: 11px; font-weight: 700; letter-spacing: .02em; padding: 3px 8px; border-radius: 4px; color: #fff; }
+
+  .filecard {
+    display: none; align-items: center; gap: 14px; padding: 14px 16px; border: 1px solid var(--line); border-radius: var(--radius); background: #fff;
+  }
+  .filecard.show { display: flex; }
+  .ficon { position: relative; width: 42px; height: 50px; flex: none; }
+  .ficon svg { display: block; width: 42px; height: 50px; }
+  .ficon b { position: absolute; bottom: 7px; left: 50%; transform: translateX(-50%); font-size: 9.5px; font-weight: 700; color: #fff; padding: 1px 4px; border-radius: 3px; line-height: 1.4; }
+  .fmeta { min-width: 0; flex: 1; }
+  .fname { font-weight: 600; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .fsize { font-size: 13px; color: var(--ok); display: flex; align-items: center; gap: 6px; }
+  .fremove { flex: none; border: 0; background: transparent; color: var(--muted); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; }
+  .fremove:hover { background: var(--stone); color: var(--danger); }
+
+  /* Inputs */
+  .input { position: relative; }
+  .input svg { position: absolute; inset-inline-start: 14px; top: 50%; transform: translateY(-50%); color: var(--faint); pointer-events: none; }
+  input[type="email"], input[type="text"] {
+    width: 100%; height: 50px; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; color: var(--ink);
+    padding: 0 14px; font-size: 16px; transition: border-color .15s, box-shadow .15s;
+  }
+  .input input { padding-inline-start: 44px; }
+  [dir="rtl"] .input input[dir="ltr"] { padding-left: 14px; padding-right: 44px; text-align: left; }
+  input::placeholder { color: #A3AAB4; }
+  input:hover { border-color: #BCC3CC; }
+  input[aria-invalid="true"] { border-color: var(--danger); }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  /* Segmented language control */
+  .seg { display: grid; grid-template-columns: 1fr 1fr; background: var(--stone); border-radius: var(--radius); padding: 4px; height: 50px; }
+  .seg input { position: absolute; opacity: 0; pointer-events: none; }
+  .seg label { display: grid; place-items: center; border-radius: 7px; cursor: pointer; font-weight: 500; font-size: 15px; color: var(--muted); }
+  .seg input:checked + label { background: #fff; color: var(--ink); font-weight: 600; box-shadow: 0 1px 3px rgba(27,34,48,.15); }
+  .seg label.ar { font-family: "IBM Plex Sans Arabic", Tahoma, sans-serif; }
+
+  :focus-visible { outline: 3px solid rgba(122,19,49,.35); outline-offset: 2px; }
+  input:focus-visible { outline: none; border-color: var(--maroon); box-shadow: 0 0 0 3px rgba(122,19,49,.14); }
+  .seg input:focus-visible + label { outline: 3px solid rgba(122,19,49,.35); }
+  .drop:focus-within { border-color: var(--maroon); }
+
+  /* Submit */
+  .submit {
+    width: 100%; height: 54px; border: 0; border-radius: var(--radius); background: var(--maroon); color: #fff;
+    font-weight: 600; font-size: 17px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
+    transition: background-color .15s; margin-top: 6px;
+  }
+  .submit:hover { background: var(--maroon-deep); }
+  .submit:disabled { cursor: progress; }
+  .under { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 14px 0 0; font-size: 14px; color: var(--muted); text-align: center; }
+
+  .error {
+    display: none; align-items: flex-start; gap: 10px; margin-bottom: 18px; padding: 12px 14px; border-radius: var(--radius);
+    background: var(--danger-soft); color: var(--danger); font-size: 15px;
+  }
+  .error.show { display: flex; }
+  .error svg { flex: none; margin-top: 2px; }
+
+  /* Upload progress */
+  .progress { display: none; margin-top: 6px; }
+  .progress.show { display: block; }
+  .ptrack { height: 8px; background: var(--stone); border-radius: 99px; overflow: hidden; }
+  .pbar { height: 100%; width: 0; background: var(--maroon); border-radius: 99px; transition: width .2s; }
+  .plabel { display: flex; justify-content: space-between; font-size: 14px; color: var(--muted); margin-top: 8px; }
+
+  /* ---------- Confirmation ---------- */
+  .done { display: none; padding: 44px 32px 36px; text-align: center; }
+  .done.show { display: block; }
+  .check { width: 104px; height: 104px; display: block; margin: 0 auto 24px; }
+  .check .halo { fill: var(--ok-soft); transform-origin: center; animation: halo .6s ease-out both; }
+  .check .disc { fill: var(--ok); transform-origin: center; animation: pop .45s .08s cubic-bezier(.2,.9,.3,1.3) both; }
+  .check path { fill: none; stroke: #fff; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 50; stroke-dashoffset: 50; animation: draw .4s .45s ease-out forwards; }
+  @keyframes halo { from { transform: scale(.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  @keyframes pop { from { transform: scale(.3); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  .done h2 { font-size: 26px; margin: 0 0 8px; color: var(--ok); }
+  .done .msg { color: var(--muted); font-size: 16px; margin: 0 auto; max-width: 30em; }
+  .sentto {
+    display: inline-flex; align-items: center; gap: 8px; margin: 16px auto 0; padding: 8px 14px; border-radius: 99px;
+    background: var(--stone); font-weight: 600; font-size: 15px; max-width: 100%; overflow-wrap: anywhere;
+  }
+  .receipt { margin: 28px 0 0; border: 1px solid var(--line); border-radius: var(--radius); text-align: start; }
+  .receipt div { display: flex; justify-content: space-between; gap: 16px; padding: 12px 16px; font-size: 14px; }
+  .receipt div + div { border-top: 1px solid var(--line); }
+  .receipt dt { color: var(--muted); }
+  .receipt dd { margin: 0; font-weight: 600; text-align: end; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .done .hint { font-size: 14px; color: var(--muted); margin: 18px 0 24px; }
+  .again {
+    border: 1px solid var(--line); background: #fff; color: var(--ink); height: 48px; padding: 0 22px; border-radius: var(--radius);
+    font-weight: 600; cursor: pointer;
+  }
+  .again:hover { border-color: var(--ink); }
+
+
+  /* ---------- Mode tabs ---------- */
+  .tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; background: var(--stone); border-radius: var(--radius); padding: 4px; margin: 18px 32px 0; }
+  .tabs button { border: 0; background: transparent; border-radius: 7px; padding: 11px 8px; font-weight: 600; font-size: 15px; color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .tabs button[aria-selected="true"] { background: #fff; color: var(--maroon); box-shadow: 0 1px 3px rgba(27,34,48,.15); }
+  .tabs svg { flex: none; }
+  .pane[hidden] { display: none; }
+
+  /* ---------- Chat ---------- */
+  .chat { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: #FAFBFC; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 12px; border-bottom: 1px solid var(--line); background: #fff; }
+  .chip { font-size: 12px; font-weight: 600; padding: 4px 9px; border-radius: 99px; background: var(--stone); color: var(--faint); display: inline-flex; align-items: center; gap: 5px; }
+  .chip::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #C4CAD2; }
+  .chip.on { background: var(--ok-soft); color: var(--ok); }
+  .chip.on::before { background: var(--ok); }
+  .msgs { height: min(58vh, 520px); overflow-y: auto; padding: 14px 12px; display: flex; flex-direction: column; gap: 10px; scroll-behavior: smooth; }
+  .msg { max-width: 88%; padding: 10px 13px; border-radius: 14px; font-size: 15px; line-height: 1.55; overflow-wrap: anywhere; position: relative; }
+  .msg.me { white-space: pre-wrap; }
+  .msg.bot p { margin: 0 0 8px; } .msg.bot p:last-child, .msg.bot ul:last-child, .msg.bot ol:last-child { margin-bottom: 0; }
+  .msg.bot ul, .msg.bot ol { margin: 0 0 8px; padding-inline-start: 20px; } .msg.bot li { margin-bottom: 3px; }
+  .msg.bot code { background: var(--stone); padding: 1px 5px; border-radius: 4px; font-size: 13.5px; }
+  .msg.bot h4 { margin: 4px 0 6px; font-size: 15px; }
+  .copy { position: absolute; inset-inline-end: 6px; bottom: -14px; border: 1px solid var(--line); background: #fff; color: var(--muted); border-radius: 99px; font-size: 11px; font-weight: 600; padding: 2px 8px; cursor: pointer; opacity: 0; transition: opacity .15s; }
+  .msg.bot:hover .copy, .msg.bot:focus-within .copy { opacity: 1; }
+  @media (hover: none) { .copy { opacity: 1; } }
+  .msg.bot.has-copy { margin-bottom: 10px; }
+  .sugg { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+  .sugg button { border: 1px solid var(--line); background: #fff; color: var(--ink); border-radius: 12px; padding: 8px 11px; font-size: 13.5px; cursor: pointer; text-align: start; }
+  .sugg button:hover { border-color: var(--maroon); color: var(--maroon); }
+  .chips .newchat { margin-inline-start: auto; border: 0; background: transparent; color: var(--maroon); font-weight: 600; font-size: 12.5px; cursor: pointer; padding: 4px 6px; display: inline-flex; align-items: center; gap: 4px; }
+  .msg.bot { background: #fff; border: 1px solid var(--line); align-self: flex-start; border-start-start-radius: 4px; }
+  .msg.me { background: var(--maroon); color: #fff; align-self: flex-end; border-start-end-radius: 4px; }
+  .typing { align-self: flex-start; display: none; gap: 4px; padding: 12px 14px; background: #fff; border: 1px solid var(--line); border-radius: 14px; }
+  .typing.show { display: inline-flex; }
+  .typing i { width: 6px; height: 6px; border-radius: 50%; background: var(--faint); animation: blink 1.2s infinite; }
+  .typing i:nth-child(2) { animation-delay: .2s; } .typing i:nth-child(3) { animation-delay: .4s; }
+  @keyframes blink { 0%, 80%, 100% { opacity: .25; } 40% { opacity: 1; } }
+  .compose { display: flex; gap: 8px; padding: 10px; border-top: 1px solid var(--line); background: #fff; }
+  .compose textarea { flex: 1; resize: none; min-height: 44px; max-height: 120px; border: 1px solid var(--line); border-radius: 10px; padding: 11px 12px; font: inherit; font-size: 15px; color: var(--ink); }
+  .compose textarea:focus-visible { outline: none; border-color: var(--maroon); box-shadow: 0 0 0 3px rgba(122,19,49,.14); }
+  .attbtn { flex: none; width: 44px; height: 44px; border: 1px solid var(--line); border-radius: 10px; background: #fff; color: var(--muted); cursor: pointer; display: grid; place-items: center; align-self: flex-end; }
+  .attbtn:hover { color: var(--maroon); border-color: var(--maroon); }
+  .attbtn:disabled { opacity: .5; cursor: default; }
+  .atts { display: none; flex-wrap: wrap; gap: 6px; padding: 8px 10px 0; background: #fff; border-top: 1px solid var(--line); }
+  .atts.show { display: flex; }
+  .att { display: inline-flex; align-items: center; gap: 6px; max-width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 5px 6px 5px 8px; font-size: 12.5px; background: #FAFBFC; }
+  .att .tb { font-size: 9.5px; font-weight: 700; color: #fff; border-radius: 3px; padding: 1px 4px; flex: none; }
+  .att .nm { max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+  .att .st { color: var(--muted); white-space: nowrap; }
+  .att.ok .st { color: var(--ok); } .att.err { border-color: #E8B4BC; background: var(--danger-soft); } .att.err .st { color: var(--danger); }
+  .att .rm { border: 0; background: transparent; color: var(--faint); cursor: pointer; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; }
+  .att .rm:hover { color: var(--danger); background: #fff; }
+  .spin { width: 11px; height: 11px; border: 2px solid #D5D9DE; border-top-color: var(--maroon); border-radius: 50%; animation: spin .8s linear infinite; flex: none; }
+  .sendbtn { flex: none; width: 44px; height: 44px; border: 0; border-radius: 10px; background: var(--maroon); color: #fff; cursor: pointer; display: grid; place-items: center; align-self: flex-end; }
+  .sendbtn:disabled { opacity: .5; cursor: default; }
+  [dir="rtl"] .sendbtn svg { transform: scaleX(-1); }
+  .ready { display: none; margin-top: 12px; border: 1px solid #BFE0CE; background: var(--ok-soft); border-radius: var(--radius); padding: 12px 14px; }
+  .ready.show { display: block; }
+  .ready b { color: var(--ok); display: flex; align-items: center; gap: 8px; }
+  .ready dl { margin: 8px 0 0; display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; font-size: 13px; }
+  .ready dt { color: var(--muted); } .ready dd { margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+  .sendto { margin-top: 14px; padding-top: 14px; border-top: 1px solid #BFE0CE; }
+  .sendto .label { color: var(--ink); }
+  .sendto .submit { margin-top: 12px; }
+  .pkg { margin-top: 10px; font-size: 13px; color: var(--muted); display: flex; gap: 8px; align-items: flex-start; }
+  @media (max-width: 560px) { .tabs { margin: 16px 20px 0; } .msgs { height: 60vh; } }
+
+  /* ---------- Footer ---------- */
+  footer.site { border-top: 1px solid var(--line); background: var(--paper); }
+  footer.site .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 32px; padding-top: 24px; padding-bottom: 28px; font-size: 13px; color: var(--muted); }
+  footer.site p { margin: 0; max-width: 60em; }
+  footer.site b { color: var(--ink); font-weight: 600; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 960px) {
+    .hero { padding: 32px 0 120px; }
+    .layout { grid-template-columns: 1fr; gap: 0; }
+    .how { order: 2; padding-top: 40px; }
+    main { margin-top: -90px; }
+  }
+  @media (max-width: 560px) {
+    .wrap { padding: 0 16px; }
+    .topbar .hide-sm { display: none; }
+    header.site .wrap { min-height: 64px; }
+    .brand-name { font-size: 16px; }
+    .hero .lede { font-size: 16px; }
+    .card-head { padding: 22px 20px 0; }
+    .card-body { padding: 20px 20px 24px; }
+    .done { padding: 36px 20px 28px; }
+    .row { grid-template-columns: 1fr; gap: 0; }
+    .row > .field:first-child { margin-bottom: 20px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .check path { stroke-dashoffset: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="wrap">
+  <span data-i18n="topbar">For government procurement teams in the State of Qatar</span>
+  <span class="hide-sm" data-i18n="topbar2">Arabic and English</span>
+</div></div>
+
+<header class="site"><div class="wrap">
+  <a class="brand" href="#" aria-label="Tender Copilot">
+    <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
+      <rect width="40" height="40" rx="9" fill="#fff"/>
+      <path d="M13 9h10l6 6v16H13z" fill="#7A1331"/>
+      <path d="M23 9v6h6" fill="#F3D9A8"/>
+      <path d="M13 9v22l-2.4-1.8 2.4-1.9-2.4-1.8 2.4-1.9-2.4-1.8 2.4-1.9-2.4-1.8 2.4-1.9-2.4-1.8 2.4-1.8z" fill="#7A1331"/>
+      <path d="M17 21.5l2.6 2.6 5-5.2" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span class="brand-name"><span data-i18n="brand">Tender Copilot</span><small data-i18n="brandSub">Procurement AI</small></span>
+  </a>
+  <button class="lang" id="langToggle" type="button">
+    <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M1.5 8h13M8 1.5c2 2 2 11 0 13M8 1.5c-2 2-2 11 0 13" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>
+    <span id="langLabel">عربي</span>
+  </button>
+</div></header>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-inner">
+      <p class="kicker" data-i18n="kicker">From need to a publish-ready tender</p>
+      <h1 data-i18n="title">Get your tender ready for the committee</h1>
+      <p class="lede" data-i18n="lede">Describe your need in a chat, or upload a draft. The copilot writes the tender file in Arabic and English, checks it against the Qatar Tenders Law, proposes evaluation criteria and emails you the PDFs.</p>
+    </div>
+  </div>
+  <svg class="teeth" viewBox="0 0 1200 34" preserveAspectRatio="none" aria-hidden="true">
+    <path fill="#F3F4F6" d="M0 34V0l66.7 34L133.3 0 200 34 266.7 0 333.3 34 400 0l66.7 34L533.3 0 600 34 666.7 0l66.6 34L800 0l66.7 34L933.3 0 1000 34l66.7-34 66.6 34L1200 0v34z"/>
+  </svg>
+</section>
+
+<main>
+  <div class="wrap layout">
+
+    <section class="how" aria-labelledby="howTitle">
+      <h2 id="howTitle" data-i18n="howTitle">How it works</h2>
+      <ol>
+        <li><b data-i18n="h1">Describe</b><span data-i18n="h1s">Discuss your need with the copilot, or attach documents you already have; it asks for anything missing, such as locations, scope and contract term.</span></li>
+        <li><b data-i18n="h2">Draft</b><span data-i18n="h2s">It writes the scope, specifications, terms and bill of quantities in Arabic and English.</span></li>
+        <li><b data-i18n="h3">Check</b><span data-i18n="h3s">Every file is checked against the Qatar Tenders Law and its regulations.</span></li>
+        <li><b data-i18n="h4">Evaluate</b><span data-i18n="h4s">Criteria, weights and a scoring guide, ready for the committee.</span></li>
+        <li><b data-i18n="h5">Package</b><span data-i18n="h5s">You receive one PDF by email: the bilingual tender file and its readiness report.</span></li>
+      </ol>
+    </section>
+
+    <div class="card" id="card">
+      <!-- Form -->
+      <form id="tenderForm" novalidate>
+        <div class="card-head">
+          <h2 id="formTitle">Submit a tender for review</h2>
+          <p id="formSub">It takes less than a minute.</p>
+        </div>
+        <div class="tabs" role="tablist">
+          <button type="button" role="tab" id="tabCreate" aria-selected="false" aria-controls="paneCreate">
+            <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M3 4.5A1.5 1.5 0 0 1 4.5 3h9A1.5 1.5 0 0 1 15 4.5v6a1.5 1.5 0 0 1-1.5 1.5H8l-3.5 3v-3h0A1.5 1.5 0 0 1 3 10.5z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+            <span data-i18n="tabCreate">New tender</span></button>
+          <button type="button" role="tab" id="tabReview" aria-selected="true" aria-controls="paneReview">
+            <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M5 2.5h5.5L14 6v9.5H5z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M7.5 10l1.5 1.5 3-3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="tabReview">Review a draft</span></button>
+        </div>
+        <div class="card-body">
+          <div class="error" id="formError" role="alert">
+            <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9 5v5M9 12.6v.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span id="errorText"></span>
+          </div>
+
+          <div class="pane" id="paneCreate" role="tabpanel" hidden>
+            <div class="field">
+              <div class="label"><span data-i18n="chatLabel">Describe what you need</span></div>
+              <div class="chat">
+                <div class="chips" id="chips">
+                  <span class="chip" data-k="subject" data-i18n="cSubject">Subject</span>
+                  <span class="chip" data-k="category" data-i18n="cCategory">Category</span>
+                  <span class="chip" data-k="sites" data-i18n="cSites">Sites</span>
+                  <span class="chip" data-k="quantities" data-i18n="cQty">Quantities</span>
+                  <span class="chip" data-k="scope" data-i18n="cScope">Scope</span>
+                  <span class="chip" data-k="term" data-i18n="cTerm">Term</span>
+                  <button type="button" class="newchat" id="newChat"><svg width="13" height="13" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span data-i18n="newChat">New chat</span></button>
+                </div>
+                <div class="msgs" id="msgs" aria-live="polite"><div class="typing" id="typing"><i></i><i></i><i></i></div></div>
+                <div class="atts" id="atts"></div>
+                <div class="compose">
+                  <button type="button" class="attbtn" id="attBtn" data-i18n-aria="attach" aria-label="Attach files">
+                    <svg width="19" height="19" viewBox="0 0 20 20" aria-hidden="true"><path d="M13.5 6.5 7.8 12.2a1.6 1.6 0 0 0 2.3 2.3l6-6a3.2 3.2 0 0 0-4.5-4.5l-6.2 6.2a4.8 4.8 0 0 0 6.8 6.8l5.3-5.3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </button>
+                  <input type="file" id="attInput" multiple hidden accept=".pdf,.docx,.doc,.xlsx,.xls,.txt,.jpg,.jpeg,.png,.webp,application/pdf,image/*,text/plain,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+                  <textarea id="chatInput" rows="1" dir="auto" data-i18n-ph="chatPh" placeholder="Type your message"></textarea>
+                  <button type="button" class="sendbtn" id="sendBtn" data-i18n-aria="send" aria-label="Send">
+                    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2.5 9h11M9.5 4.5 14 9l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </button>
+                </div>
+              </div>
+              <div class="ready" id="readyBox">
+                <b><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="8" fill="#1E7A50"/><path d="M4.5 8.2l2.2 2.2 4.6-4.8" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="readyTitle">Requirement ready</span></b>
+                <dl id="readyList"></dl>
+                <div class="sendto">
+                  <label class="label" for="emailCreate"><span data-i18n="sendTo">Send the tender package to</span></label>
+                  <div class="input">
+                    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><rect x="1.5" y="3.5" width="15" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M2 5l7 5 7-5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+                    <input type="email" id="emailCreate" autocomplete="email" inputmode="email" dir="ltr" placeholder="name@entity.gov.qa">
+                  </div>
+                  <button type="submit" class="submit" id="generateBtn"><span data-i18n="submitCreate">Generate tender package</span></button>
+                  <p class="under"><span data-i18n="timeCreate">The PDF arrives by email within a few minutes.</span></p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pane" id="paneReview" role="tabpanel">
+          <div class="field">
+            <div class="label"><span data-i18n="fileLabel">Tender file</span></div>
+            <label class="drop" id="drop" for="file">
+              <span class="up"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0l-5 5m5-5l5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" fill="none" stroke="#7A1331" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <strong><span data-i18n="dropA">Drag your file here or</span> <u data-i18n="dropB">browse</u></strong>
+              <span class="sub" data-i18n="dropHint">Maximum size 10 MB</span>
+              <span class="types" aria-hidden="true">
+                <span style="background:#B42318">PDF</span><span style="background:#2B579A">DOCX</span><span style="background:#2B579A">DOC</span><span style="background:#217346">XLSX</span><span style="background:#217346">XLS</span><span style="background:#5B6472">TXT</span><span style="background:#6D4C9F">JPG</span><span style="background:#6D4C9F">PNG</span>
+              </span>
+              <input type="file" id="file" name="tender" accept=".pdf,.docx,.doc,.xlsx,.xls,.txt,.jpg,.jpeg,.png,image/jpeg,image/png,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/plain">
+            </label>
+            <div class="filecard" id="filecard">
+              <span class="ficon" aria-hidden="true"><svg viewBox="0 0 42 50"><path d="M4 1h24l13 13v32a3 3 0 0 1-3 3H4a3 3 0 0 1-3-3V4a3 3 0 0 1 3-3z" fill="#F6F7F9" stroke="#C4CAD2"/><path d="M28 1v10a3 3 0 0 0 3 3h10" fill="#E4E7EB" stroke="#C4CAD2"/></svg><b id="fbadge"></b></span>
+              <div class="fmeta">
+                <div class="fname" id="fname"></div>
+                <div class="fsize"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="7" fill="#1E7A50"/><path d="M4 7.2l2 2 4-4.2" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="fsize"></span></div>
+              </div>
+              <button type="button" class="fremove" id="fremove" data-i18n-aria="remove" aria-label="Remove file">
+                <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M4.5 4.5l9 9m0-9l-9 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              </button>
+            </div>
+          </div>
+          </div>
+
+          <div class="field" id="emailField">
+            <label class="label" for="email"><span data-i18n="email">Write your email to receive the report</span></label>
+            <div class="input">
+              <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><rect x="1.5" y="3.5" width="15" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M2 5l7 5 7-5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+              <input type="email" id="email" name="email" autocomplete="email" inputmode="email" dir="ltr" required placeholder="name@entity.gov.qa">
+            </div>
+          </div>
+
+          <div class="field" id="nameField">
+              <label class="label" for="name"><span data-i18n="name">Your name</span><span class="opt" data-i18n="optional">Optional</span></label>
+              <div class="input">
+                <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="6" r="3.2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M2.8 16c.8-3.2 3.3-5 6.2-5s5.4 1.8 6.2 5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                <input type="text" id="name" name="name" autocomplete="name" dir="auto">
+              </div>
+            </div>
+
+          <button type="submit" class="submit" id="submitBtn"><span id="submitLabel">Review tender</span></button>
+
+          <div class="progress" id="progress" aria-live="polite">
+            <div class="ptrack"><div class="pbar" id="pbar"></div></div>
+            <div class="plabel"><span data-i18n="uploading">Uploading your tender</span><span id="ppct">0%</span></div>
+          </div>
+
+          <p class="under" id="underNote">
+            <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M8 4.5V8l2.3 1.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            <span id="timeNote">The PDF report arrives by email within a few minutes.</span>
+          </p>
+        </div>
+      </form>
+
+      <!-- Confirmation -->
+      <section class="done" id="doneView" aria-live="polite" tabindex="-1">
+        <svg class="check" viewBox="0 0 104 104" aria-hidden="true">
+          <circle class="halo" cx="52" cy="52" r="52"/>
+          <circle class="disc" cx="52" cy="52" r="38"/>
+          <path d="M36 53l11 11 22-23"/>
+        </svg>
+        <h2 data-i18n="doneTitle">Tender received</h2>
+        <p class="msg" data-i18n="doneText">Your review has started. You will receive the PDF report shortly at:</p>
+        <div class="sentto" dir="ltr">
+          <svg width="16" height="16" viewBox="0 0 18 18" aria-hidden="true"><rect x="1.5" y="3.5" width="15" height="11" rx="2" fill="none" stroke="#5B6472" stroke-width="1.5"/><path d="M2 5l7 5 7-5" fill="none" stroke="#5B6472" stroke-width="1.5"/></svg>
+          <span id="sentTo"></span>
+        </div>
+        <dl class="receipt">
+          <div><dt data-i18n="rFile">File</dt><dd id="rFile" dir="auto"></dd></div>
+          <div><dt data-i18n="rTime">Received</dt><dd id="rTime"></dd></div>
+        </dl>
+        <p class="hint" data-i18n="doneHint">Not in your inbox after 10 minutes? Check your junk folder.</p>
+        <button class="again" id="againBtn" type="button" data-i18n="again">Review another tender</button>
+      </section>
+    </div>
+
+  </div>
+</main>
+
+<footer class="site"><div class="wrap">
+  <p><b data-i18n="brand">Tender Copilot</b> · <span data-i18n="footer">The copilot prepares drafts and checks. The procurement officer approves every section before publishing on Monaqasat.</span></p>
+  <p><bdi dir="ltr">© 2026 ACTUM</bdi> · <span data-i18n="copy">All rights reserved.</span></p>
+</div></footer>
+
+<script>
+/* ======================= CONFIG ======================= */
+const WEBHOOK_URL = "https://n8n.chatme.ai/webhook/tender-copilot";
+const CHAT_URL = WEBHOOK_URL + "-chat"; // n8n webhook path: tender-copilot-chat
+const FILE_URL = WEBHOOK_URL + "-file"; // n8n webhook path: tender-copilot-file (reads chat attachments, incl. OCR)
+const MAX_ATTACH = 3;
+const MAX_MB = 10;
+/* ====================================================== */
+
+const T = {
+  en: {
+    topbar: "For government procurement teams in the State of Qatar", topbar2: "Arabic and English",
+    brand: "Tender Copilot", brandSub: "Procurement AI", toggle: "عربي",
+    kicker: "From need to a publish-ready tender",
+    title: "Get your tender ready for the committee",
+    lede: "Describe your need in a chat, or upload a draft. The copilot writes the tender file in Arabic and English, checks it against the Qatar Tenders Law, proposes evaluation criteria and emails you the PDFs.",
+    howTitle: "How it works",
+    h1: "Describe", h1s: "Discuss your need with the copilot, or attach documents you already have; it asks for anything missing, such as locations, scope and contract term.",
+    h4: "Evaluate", h4s: "Criteria, weights and a scoring guide, ready for the committee.",
+    h5: "Package", h5s: "You receive one PDF by email: the bilingual tender file and its readiness report.",
+    h2: "Draft", h2s: "It writes the scope, specifications, terms and bill of quantities in Arabic and English.",
+    h3: "Check", h3s: "Every file is checked against the Qatar Tenders Law and its regulations.",
+    formTitleReview: "Submit a tender for review", formSubReview: "Upload a draft and get its readiness report.",
+    formTitleCreate: "Create a new tender", formSubCreate: "Describe your need; the copilot drafts and checks the tender file.",
+    tabCreate: "New tender", tabReview: "Review a draft", chatLabel: "Describe what you need", chatPh: "Type your message", send: "Send",
+    cSubject: "Subject", cCategory: "Category", cSites: "Sites", cQty: "Quantities", cScope: "Scope", cTerm: "Term",
+    readyTitle: "Requirement ready", pkgNote: "You will receive one PDF: the draft tender file in Arabic and English, followed by its readiness report.",
+    submitReview: "Review tender", submitCreate: "Generate tender package", sendTo: "Send the tender package to", timeCreate: "The PDF arrives by email within a few minutes.",
+    greet: "Hello! I'm your procurement copilot. Ask me anything about tendering in Qatar, or tell me what you need to buy and I'll help you build the tender step by step.",
+    newChat: "New chat", copyBtn: "Copy", copiedBtn: "Copied",
+    attach: "Attach files", reading: "Reading…", readOk: "Read", readOcr: "Read (scan)", readErr: "Could not read", attMax: "You can attach up to 3 files, 10 MB each.",
+    attachedMsg: "Attached:", attErrType: "Unsupported file type. Use PDF, Word, Excel, TXT or an image.",
+    sugg: ["Start a new tender from my requirement", "Which procurement method fits my need?", "What guarantees are required in a public tender?", "Help me define measurable service levels"],
+    chatErr: "The copilot could not be reached. Check your connection and try again.",
+    errChat: "Describe your need in the chat first. The button becomes available when the requirement is ready.",
+    doneTextDraft: "Drafting has started. You will receive the tender package PDF shortly at:",
+    draftPkg: "Tender package (one PDF)",
+    rk: { title: "Title", category: "Category", sites: "Sites", quantities: "Quantities", scope: "Scope", term: "Term", service_levels: "Service levels", estimated_value: "Budget" },
+    fileLabel: "Tender file", dropA: "Drag your file here or", dropB: "browse", dropHint: "Maximum size 10 MB",
+    remove: "Remove file",
+    email: "Write your email to receive the report", name: "Your name", optional: "Optional", reportLang: "Report language",
+    submit: "Review tender", uploading: "Uploading your tender",
+    time: "The PDF report arrives by email within a few minutes.",
+    doneTitle: "Tender received", doneText: "Your review has started. You will receive the PDF report shortly at:",
+    rFile: "File", rLang: "Report language", rTime: "Received",
+    doneHint: "Not in your inbox after 10 minutes? Check your junk folder.",
+    again: "Review another tender",
+    footer: "The copilot prepares drafts and checks. The procurement officer approves every section before publishing on Monaqasat.",
+    copy: "All rights reserved.",
+    errEmpty: "Attach the tender file to continue.",
+    errType: "This file type is not supported. Upload a PDF, Word, Excel, .txt or image file.",
+    errSize: "The file is larger than 10 MB. Upload a smaller file.",
+    errEmail: "Write a valid email address so we can send you the report.",
+    errNet: "The tender was not sent. Check your connection and try again.",
+    errServer: "The tender was not received. Try again in a minute.",
+    langNames: { ar: "Arabic", en: "English" },
+  },
+  ar: {
+    topbar: "لفرق المشتريات في الجهات الحكومية بدولة قطر", topbar2: "بالعربية والإنجليزية",
+    brand: "مساعد المناقصات", brandSub: "ذكاء اصطناعي للمشتريات", toggle: "English",
+    kicker: "من الاحتياج إلى مناقصة جاهزة للطرح",
+    title: "جهّز مناقصتك للعرض على اللجنة",
+    lede: "صِف احتياجك في محادثة، أو ارفع مسودة. يكتب المساعد ملف المناقصة بالعربية والإنجليزية، ويفحصه وفق قانون المناقصات والمزايدات القطري، ويقترح معايير التقييم، ويرسل إليك الملفات بصيغة PDF.",
+    howTitle: "كيف تعمل الخدمة",
+    h1: "الوصف", h1s: "ناقش احتياجك مع المساعد، أو أرفق المستندات اللي عندك، ويسألك عن أي معلومة ناقصة مثل المواقع ونطاق العمل ومدة العقد.",
+    h4: "التقييم", h4s: "معايير وأوزان ودليل تقييم جاهز للجنة.",
+    h5: "الحزمة", h5s: "يصلك على بريدك ملف PDF واحد: ملف المناقصة بالعربية والإنجليزية وتقرير جاهزيته.",
+    h2: "المسودة", h2s: "يكتب نطاق العمل والمواصفات والشروط وجدول الكميات بالعربية والإنجليزية.",
+    h3: "الفحص", h3s: "يُفحص كل ملف وفق قانون المناقصات والمزايدات القطري ولائحته التنفيذية.",
+    formTitleReview: "أرسل مناقصة للمراجعة", formSubReview: "ارفع المسودة واستلم تقرير جاهزيتها.",
+    formTitleCreate: "أنشئ مناقصة جديدة", formSubCreate: "صِف احتياجك، ويكتب المساعد ملف المناقصة ويفحصه.",
+    tabCreate: "مناقصة جديدة", tabReview: "مراجعة مسودة", chatLabel: "صِف احتياجك", chatPh: "اكتب رسالتك", send: "إرسال",
+    cSubject: "الموضوع", cCategory: "الفئة", cSites: "المواقع", cQty: "الكميات", cScope: "النطاق", cTerm: "المدة",
+    readyTitle: "الاحتياج جاهز", pkgNote: "يصلك ملف PDF واحد: مسودة ملف المناقصة بالعربية والإنجليزية، ويليها تقرير جاهزيتها.",
+    submitReview: "راجِع المناقصة", submitCreate: "أنشئ حزمة المناقصة", sendTo: "أرسل حزمة المناقصة إلى", timeCreate: "يصلك الملف بصيغة PDF على بريدك خلال دقائق.",
+    greet: "السلام عليكم، حيّاك الله! أنا مساعدك في المشتريات. اسألني أي شي عن المناقصات في قطر، أو قول لي وش تبي تشتري وأساعدك تبني المناقصة خطوة بخطوة.",
+    newChat: "محادثة جديدة", copyBtn: "نسخ", copiedBtn: "تم النسخ",
+    attach: "إرفاق ملفات", reading: "جارٍ القراءة…", readOk: "تمت القراءة", readOcr: "تمت القراءة (مسح ضوئي)", readErr: "تعذّرت القراءة", attMax: "تقدر ترفق لين 3 ملفات، كل ملف 10 ميغابايت كحد أقصى.",
+    attachedMsg: "مرفقات:", attErrType: "نوع الملف غير مدعوم. استخدم PDF أو Word أو Excel أو TXT أو صورة.",
+    sugg: ["أبي أبدأ مناقصة جديدة من احتياجي", "أي طريقة طرح تناسب احتياجي؟", "وش التأمينات المطلوبة في المناقصة العامة؟", "ساعدني أحدد مستويات خدمة قابلة للقياس"],
+    chatErr: "ما قدرنا نوصل للمساعد. تأكد من الاتصال وحاول مرة ثانية.",
+    errChat: "صِف احتياجك في المحادثة أولاً، ويتفعّل الزر لما يكون الاحتياج جاهز.",
+    doneTextDraft: "بدأت كتابة المسودة، وسيصلك ملف المناقصة كامل بصيغة PDF قريباً على:",
+    draftPkg: "حزمة المناقصة (ملف PDF واحد)",
+    rk: { title: "العنوان", category: "الفئة", sites: "المواقع", quantities: "الكميات", scope: "النطاق", term: "المدة", service_levels: "مستويات الخدمة", estimated_value: "الميزانية" },
+    fileLabel: "ملف المناقصة", dropA: "اسحب الملف إلى هنا أو", dropB: "تصفّح", dropHint: "الحد الأقصى 10 ميغابايت",
+    remove: "إزالة الملف",
+    email: "اكتب بريدك الإلكتروني لاستلام التقرير", name: "الاسم", optional: "اختياري", reportLang: "لغة التقرير",
+    submit: "راجِع المناقصة", uploading: "جارٍ رفع المناقصة",
+    time: "يصلك التقرير بصيغة PDF على بريدك خلال دقائق.",
+    doneTitle: "تم استلام المناقصة", doneText: "بدأت المراجعة، وسيصلك التقرير بصيغة PDF قريباً على:",
+    rFile: "الملف", rLang: "لغة التقرير", rTime: "وقت الاستلام",
+    doneHint: "لم يصلك التقرير خلال 10 دقائق؟ تحقق من مجلد الرسائل غير المرغوب فيها.",
+    again: "مراجعة مناقصة أخرى",
+    footer: "يُعدّ المساعد المسودات والفحوصات، ويعتمد مسؤول المشتريات كل قسم قبل النشر على منصة مناقصات.",
+    copy: "جميع الحقوق محفوظة.",
+    errEmpty: "أرفق ملف المناقصة للمتابعة.",
+    errType: "نوع الملف غير مدعوم. ارفع ملف PDF أو Word أو Excel أو TXT أو صورة.",
+    errSize: "حجم الملف أكبر من 10 ميغابايت. ارفع ملفاً أصغر.",
+    errEmail: "اكتب بريداً إلكترونياً صحيحاً لنرسل إليك التقرير.",
+    errNet: "لم تُرسل المناقصة. تحقق من الاتصال وأعد المحاولة.",
+    errServer: "لم تُستلم المناقصة. أعد المحاولة بعد دقيقة.",
+    langNames: { ar: "العربية", en: "الإنجليزية" },
+  },
+};
+
+const TYPES = {
+  pdf: { label: "PDF", color: "#B42318" }, docx: { label: "DOCX", color: "#2B579A" }, doc: { label: "DOC", color: "#2B579A" },
+  xlsx: { label: "XLSX", color: "#217346" }, xls: { label: "XLS", color: "#217346" }, txt: { label: "TXT", color: "#5B6472" },
+  jpg: { label: "JPG", color: "#6D4C9F" }, jpeg: { label: "JPG", color: "#6D4C9F" }, png: { label: "PNG", color: "#6D4C9F" }, webp: { label: "IMG", color: "#6D4C9F" },
+};
+
+let lang = "en";
+let file = null;
+let errKey = "";
+const $ = (id) => document.getElementById(id);
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function applyLang() {
+  const t = T[lang];
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+  document.title = lang === "ar" ? "مساعد المناقصات · مراجعة المناقصات للجهات الحكومية في قطر" : "Tender Copilot · Tender review for government entities in Qatar";
+  document.querySelectorAll("[data-i18n]").forEach((el) => { const k = el.dataset.i18n; if (t[k] != null) el.textContent = t[k]; });
+  document.querySelectorAll("[data-i18n-ph]").forEach((el) => { el.placeholder = t[el.dataset.i18nPh]; });
+  document.querySelectorAll("[data-i18n-aria]").forEach((el) => el.setAttribute("aria-label", t[el.dataset.i18nAria]));
+  $("langLabel").textContent = t.toggle;
+  applyMode();
+  if (errKey) showError(errKey);
+  if ($("doneView").classList.contains("show")) fillReceipt();
+}
+$("langToggle").addEventListener("click", () => {
+  lang = lang === "en" ? "ar" : "en";
+  applyLang();
+});
+
+function showError(key) {
+  errKey = key || "";
+  $("errorText").textContent = key ? T[lang][key] : "";
+  $("formError").classList.toggle("show", !!key);
+}
+
+function fmtSize(b) { return b < 1024 * 1024 ? `${Math.max(1, Math.round(b / 1024))} KB` : `${(b / 1024 / 1024).toFixed(1)} MB`; }
+
+function pickFile(f) {
+  if (!f) return;
+  const ext = f.name.split(".").pop().toLowerCase();
+  if (!TYPES[ext]) { showError("errType"); return; }
+  if (f.size > MAX_MB * 1024 * 1024) { showError("errSize"); return; }
+  showError("");
+  file = f;
+  const tp = TYPES[ext];
+  $("fname").textContent = f.name;
+  $("fsize").textContent = fmtSize(f.size);
+  $("fbadge").textContent = tp.label;
+  $("fbadge").style.background = tp.color;
+  $("filecard").classList.add("show");
+  $("drop").style.display = "none";
+}
+function clearFile() {
+  file = null; $("file").value = "";
+  $("filecard").classList.remove("show"); $("drop").style.display = "";
+}
+
+$("file").addEventListener("change", (e) => pickFile(e.target.files[0]));
+$("fremove").addEventListener("click", () => { clearFile(); $("file").focus(); });
+const drop = $("drop");
+["dragenter", "dragover"].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add("over"); }));
+["dragleave", "drop"].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.remove("over"); }));
+drop.addEventListener("drop", (e) => pickFile(e.dataTransfer.files[0]));
+$("email").addEventListener("input", () => { $("email").removeAttribute("aria-invalid"); if (errKey === "errEmail") showError(""); });
+
+function send(fd) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", WEBHOOK_URL);
+    xhr.upload.onprogress = (e) => { if (e.lengthComputable) setProgress(e.loaded / e.total); };
+    xhr.onload = () => (xhr.status >= 200 && xhr.status < 300 ? resolve() : reject(new Error("server")));
+    xhr.onerror = () => reject(new Error("network"));
+    xhr.send(fd);
+  });
+}
+function setProgress(r) {
+  const pct = Math.round(Math.min(1, r) * 100);
+  $("pbar").style.width = pct + "%"; $("ppct").textContent = pct + "%";
+}
+function busy(on) {
+  $("generateBtn").disabled = on;
+  const create = mode === "create";
+  $("submitBtn").style.display = on || create ? "none" : "";
+  $("underNote").style.display = on || create ? "none" : "";
+  $("progress").classList.toggle("show", on);
+  document.querySelectorAll("#tenderForm input, #tenderForm button").forEach((el) => (el.disabled = on));
+  if (on) setProgress(0);
+}
+
+let receipt = {};
+function fillReceipt() {
+  const t = T[lang];
+  $("sentTo").textContent = receipt.email;
+  $("rFile").textContent = receipt.draft ? t.draftPkg : receipt.file;
+  document.querySelector('[data-i18n="doneText"]').textContent = receipt.draft ? t.doneTextDraft : t.doneText;
+  $("rTime").textContent = receipt.time.toLocaleString(lang === "ar" ? "ar-QA-u-nu-latn" : "en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+}
+
+
+/* ---------------- Mode: review a draft / create a new tender ---------------- */
+let mode = "create";
+let chat = [];           // [{role, content}]
+let requirement = null;  // from the copilot
+let chatReady = false;
+let chatBusy = false;
+
+function applyMode() {
+  const t = T[lang];
+  const create = mode === "create";
+  $("tabCreate").setAttribute("aria-selected", create);
+  $("tabReview").setAttribute("aria-selected", !create);
+  $("paneCreate").hidden = !create;
+  $("paneReview").hidden = create;
+  $("formTitle").textContent = create ? t.formTitleCreate : t.formTitleReview;
+  $("formSub").textContent = create ? t.formSubCreate : t.formSubReview;
+  $("submitLabel").textContent = create ? t.submitCreate : t.submitReview;
+  $("timeNote").textContent = create ? t.timeCreate : t.time;
+  // New tender: only the chat; email + button appear inside the "Requirement ready" card.
+  $("nameField").hidden = true;
+  $("emailField").style.display = create ? "none" : "";
+  $("submitBtn").style.display = create ? "none" : "";
+  $("underNote").style.display = create ? "none" : "";
+  if (create && !chat.some((m) => m.role === "user")) {
+    chat = [{ role: "assistant", content: t.greet }];
+    renderChat();
+  }
+  renderReady();
+}
+function setMode(m) { mode = m; showError(""); applyMode(); if (m === "create") setTimeout(() => $("chatInput").focus(), 50); }
+$("tabCreate").addEventListener("click", () => setMode("create"));
+$("tabReview").addEventListener("click", () => setMode("review"));
+
+const STORE = "tc-chat-v1";
+function saveChat() { try { localStorage.setItem(STORE, JSON.stringify({ chat, requirement, chatReady, progress: lastProgress, docs: docs.filter((d) => d.status === "ok") })); } catch (e) {} }
+function loadChat() {
+  try {
+    const d = JSON.parse(localStorage.getItem(STORE) || "null");
+    if (d && Array.isArray(d.chat)) { chat = d.chat; requirement = d.requirement || null; chatReady = !!d.chatReady; lastProgress = d.progress || {}; docs = Array.isArray(d.docs) ? d.docs : []; }
+  } catch (e) {}
+}
+let lastProgress = {};
+
+function esc(t) { return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+function md(text) {
+  const inline = (t) => esc(t).replace(/`([^`]+)`/g, "<code>$1</code>").replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+  const lines = String(text).replace(/\r/g, "").split("\n");
+  let html = "", list = null, para = [];
+  const flushPara = () => { if (para.length) { html += "<p>" + para.map(inline).join("<br>") + "</p>"; para = []; } };
+  const flushList = () => { if (list) { html += `<${list.t}>` + list.items.map((i) => `<li>${inline(i)}</li>`).join("") + `</${list.t}>`; list = null; } };
+  for (const raw of lines) {
+    const line = raw.trimEnd();
+    const ul = line.match(/^\s*[-*•]\s+(.*)$/), ol = line.match(/^\s*\d+[.)]\s+(.*)$/), h = line.match(/^\s*#{1,4}\s+(.*)$/);
+    if (ul || ol) { flushPara(); const t = ul ? "ul" : "ol"; if (!list || list.t !== t) { flushList(); list = { t, items: [] }; } list.items.push((ul || ol)[1]); continue; }
+    flushList();
+    if (h) { flushPara(); html += `<h4>${inline(h[1])}</h4>`; continue; }
+    if (!line.trim()) { flushPara(); continue; }
+    para.push(line);
+  }
+  flushPara(); flushList();
+  return html;
+}
+
+function renderChat() {
+  const box = $("msgs");
+  box.querySelectorAll(".msg, .sugg").forEach((n) => n.remove());
+  const typing = $("typing");
+  chat.forEach((m, idx) => {
+    const d = document.createElement("div");
+    d.className = "msg " + (m.role === "user" ? "me" : "bot");
+    d.dir = "auto";
+    if (m.role === "user") d.textContent = m.content;
+    else {
+      d.innerHTML = md(m.content);
+      if (idx > 0) {
+        d.classList.add("has-copy");
+        const c = document.createElement("button");
+        c.type = "button"; c.className = "copy"; c.textContent = T[lang].copyBtn;
+        c.addEventListener("click", () => { navigator.clipboard?.writeText(m.content); c.textContent = T[lang].copiedBtn; setTimeout(() => (c.textContent = T[lang].copyBtn), 1500); });
+        d.appendChild(c);
+      }
+    }
+    box.insertBefore(d, typing);
+  });
+  if (!chat.some((m) => m.role === "user")) {
+    const sg = document.createElement("div");
+    sg.className = "sugg";
+    for (const q of T[lang].sugg) {
+      const b = document.createElement("button");
+      b.type = "button"; b.textContent = q; b.dir = "auto";
+      b.addEventListener("click", () => { $("chatInput").value = q; sendChat(); });
+      sg.appendChild(b);
+    }
+    box.insertBefore(sg, typing);
+  }
+  box.scrollTop = box.scrollHeight;
+}
+function renderProgress(pr) {
+  lastProgress = pr || {};
+  document.querySelectorAll("#chips .chip").forEach((c) => c.classList.toggle("on", !!(pr && pr[c.dataset.k])));
+}
+function renderReady() {
+  const t = T[lang];
+  $("readyBox").classList.toggle("show", chatReady && !!requirement);
+  if (!requirement) return;
+  const keys = ["title", "category", "sites", "quantities", "scope", "term"];
+  $("readyList").innerHTML = "";
+  for (const k of keys) {
+    if (!requirement[k]) continue;
+    const dt = document.createElement("dt"); dt.textContent = t.rk[k];
+    const dd = document.createElement("dd"); dd.textContent = requirement[k]; dd.dir = "auto";
+    $("readyList").append(dt, dd);
+  }
+}
+
+async function sendChat() {
+  const input = $("chatInput");
+  const text = input.value.trim();
+  if (!text || chatBusy) return;
+  chat.push({ role: "user", content: text });
+  input.value = ""; autosize();
+  renderChat();
+  chatBusy = true; $("sendBtn").disabled = true; $("typing").classList.add("show");
+  $("msgs").scrollTop = $("msgs").scrollHeight;
+  try {
+    const fd = new FormData();
+    fd.append("payload", JSON.stringify({ language: lang, messages: chat.filter((m, i) => !(i === 0 && m.role === "assistant")), requirement: requirement || {}, documents: readyDocs() }));
+    const res = await fetch(CHAT_URL, { method: "POST", body: fd });
+    if (!res.ok) throw new Error("server");
+    const data = await res.json();
+    chat.push({ role: "assistant", content: String(data.reply || "") });
+    requirement = data.requirement || requirement;
+    chatReady = !!data.ready;
+    renderProgress(data.progress);
+  } catch (err) {
+    chat.push({ role: "assistant", content: T[lang].chatErr });
+  } finally {
+    chatBusy = false; $("sendBtn").disabled = false; $("typing").classList.remove("show");
+    renderChat(); renderReady(); saveChat();
+    if (chatReady) showError("");
+  }
+}
+function autosize() { const el = $("chatInput"); el.style.height = "auto"; el.style.height = Math.min(el.scrollHeight, 120) + "px"; }
+$("sendBtn").addEventListener("click", sendChat);
+function newChat() { chat = [{ role: "assistant", content: T[lang].greet }]; requirement = null; chatReady = false; docs = []; renderAtts(); renderProgress({}); renderChat(); renderReady(); saveChat(); $("chatInput").focus(); }
+$("newChat").addEventListener("click", newChat);
+
+/* ---------------- Chat attachments (read once, OCR for scans) ---------------- */
+let docs = []; // [{id, name, ext, status: 'reading'|'ok'|'err', text, ocr, error}]
+function renderAtts() {
+  const box = $("atts");
+  box.innerHTML = "";
+  box.classList.toggle("show", docs.length > 0);
+  const t = T[lang];
+  for (const d of docs) {
+    const tp = TYPES[d.ext] || { label: "FILE", color: "#5B6472" };
+    const el = document.createElement("span");
+    el.className = "att" + (d.status === "ok" ? " ok" : d.status === "err" ? " err" : "");
+    el.title = d.status === "err" ? (d.error || t.readErr) : d.name;
+    el.innerHTML = `<b class="tb" style="background:${tp.color}">${tp.label}</b><span class="nm"></span>` +
+      (d.status === "reading" ? `<i class="spin"></i><span class="st">${t.reading}</span>` :
+       `<span class="st">${d.status === "ok" ? (d.ocr ? t.readOcr : t.readOk) : t.readErr}</span>`) +
+      `<button type="button" class="rm" aria-label="Remove"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>`;
+    el.querySelector(".nm").textContent = d.name;
+    el.querySelector(".rm").addEventListener("click", () => { docs = docs.filter((x) => x.id !== d.id); renderAtts(); saveChat(); });
+    box.appendChild(el);
+  }
+  $("attBtn").disabled = docs.length >= MAX_ATTACH;
+}
+function readyDocs() { return docs.filter((d) => d.status === "ok").map((d) => ({ name: d.name, text: d.text })); }
+
+async function readAttachment(d, file) {
+  try {
+    const fd = new FormData();
+    fd.append("tender", file, file.name);
+    fd.append("mode", "extract");
+    const res = await fetch(FILE_URL, { method: "POST", body: fd });
+    if (!res.ok) throw new Error("server");
+    const data = await res.json();
+    if (data.ok) { d.status = "ok"; d.text = String(data.text || ""); d.ocr = !!data.ocr; }
+    else { d.status = "err"; d.error = String(data.error || ""); }
+  } catch (e) { d.status = "err"; d.error = T[lang].chatErr; }
+}
+
+$("attBtn").addEventListener("click", () => $("attInput").click());
+$("attInput").addEventListener("change", async (e) => {
+  const t = T[lang];
+  const files = [...e.target.files];
+  e.target.value = "";
+  const room = MAX_ATTACH - docs.length;
+  if (files.length > room) showError("attMax");
+  const accepted = [];
+  for (const f of files.slice(0, Math.max(0, room))) {
+    const ext = f.name.split(".").pop().toLowerCase();
+    if (!TYPES[ext]) { showError("attErrType"); continue; }
+    if (f.size > MAX_MB * 1024 * 1024) { showError("attMax"); continue; }
+    const d = { id: Math.random().toString(36).slice(2), name: f.name, ext, status: "reading", text: "", ocr: false };
+    docs.push(d); accepted.push([d, f]);
+  }
+  renderAtts();
+  if (!accepted.length) return;
+  await Promise.all(accepted.map(([d, f]) => readAttachment(d, f)));
+  renderAtts(); saveChat();
+  const okNames = accepted.filter(([d]) => d.status === "ok").map(([d]) => d.name);
+  if (okNames.length) {
+    // Tell the copilot about the new files so it summarises them and asks for what is missing
+    $("chatInput").value = `📎 ${t.attachedMsg} ${okNames.join(", ")}` + ($("chatInput").value.trim() ? `\n${$("chatInput").value.trim()}` : "");
+    sendChat();
+  }
+});
+
+$("chatInput").addEventListener("input", autosize);
+$("chatInput").addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendChat(); } });
+
+$("tenderForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const email = (mode === "create" ? $("emailCreate") : $("email")).value.trim();
+  if (mode === "review" && !file) { showError("errEmpty"); return; }
+  if (mode === "create" && !(chatReady && requirement)) { showError("errChat"); $("chatInput").focus(); return; }
+  if (!EMAIL_RE.test(email)) { showError("errEmail"); const ef = mode === "create" ? $("emailCreate") : $("email"); ef.setAttribute("aria-invalid", "true"); ef.focus(); return; }
+  showError("");
+  const reportLang = "en"; // report and email in English; the draft tender file is bilingual
+
+  const fd = new FormData();
+  if (mode === "review") {
+    fd.append("tender", file, file.name);
+  } else {
+    fd.append("mode", "draft");
+    fd.append("requirement", JSON.stringify(requirement));
+    fd.append("documents", JSON.stringify(readyDocs()));
+    fd.append("conversation", chat.map((m) => `${m.role === "user" ? "Officer" : "Copilot"}: ${m.content}`).join("\n").slice(0, 6000));
+  }
+  fd.append("email", email);
+  fd.append("name", mode === "create" && requirement ? String(requirement.contact_name || "") : "");
+  fd.append("language", reportLang);
+
+  busy(true);
+  try {
+    await send(fd);
+    setProgress(1);
+    receipt = { email, file: mode === "review" ? file.name : null, lang: reportLang, time: new Date(), draft: mode === "create" };
+    fillReceipt();
+    $("tenderForm").style.display = "none";
+    $("doneView").classList.add("show");
+    $("doneView").focus({ preventScroll: true });
+    $("card").scrollIntoView({ behavior: "smooth", block: "start" });
+  } catch (err) {
+    showError(err.message === "server" ? "errServer" : "errNet");
+  } finally {
+    busy(false);
+  }
+});
+
+$("againBtn").addEventListener("click", () => {
+  $("tenderForm").reset(); clearFile(); showError("");
+  chat = []; requirement = null; chatReady = false; renderProgress({});
+  docs = []; renderAtts();
+  try { localStorage.removeItem(STORE); } catch (e) {}
+  $("doneView").classList.remove("show");
+  $("tenderForm").style.display = "";
+  applyMode();
+});
+
+loadChat();
+applyLang();
+renderChat(); renderProgress(lastProgress); renderReady(); renderAtts();
+</script>
+</body>
+</html>
